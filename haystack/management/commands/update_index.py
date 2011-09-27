@@ -5,7 +5,7 @@ from optparse import make_option
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import AppCommand
-from django.db import reset_queries
+from django.db import reset_queries, close_connection
 from django.utils.encoding import smart_str
 from haystack import connections as haystack_connections
 from haystack.constants import DEFAULT_ALIAS
@@ -46,6 +46,8 @@ def worker(bits):
         do_update(backend, index, qs, start, end, total, verbosity=verbosity)
     elif bits[0] == 'do_remove':
         do_remove(backend, index, model, pks_seen, start, upper_bound, verbosity=verbosity)
+    
+    close_connection()
 
 
 def build_queryset(index, model, age=DEFAULT_AGE, verbosity=1):
